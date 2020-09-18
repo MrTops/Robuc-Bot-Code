@@ -9,13 +9,8 @@ module.exports.run = async (client, message, args) => {
     if(!target) {
         sendError(message.channel, `Could not locate user`, ``, 15000);
         return;
-    }
-    if(target == message.author) {
+    }else if(target == message.author) {
         sendError(message.channel, `You cannot send yourself payment!`, ``, 15000);
-        return;
-    }
-    if(isNaN(args[1])){
-        sendError(message.channel, `Did not find a number`, ``, 15000);
         return;
     }
     let amount = parseInt(args[1]);

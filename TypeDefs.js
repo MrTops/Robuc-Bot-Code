@@ -11,7 +11,7 @@ module.exports.Rarities = [
     new Rarity('epic', 6, 8, 25, "🟪"),
     new Rarity('legendary', 10, 15, 20, "🟧"),
     new Rarity('ultra', 20, 25, 5, "🟥"),
-    new Rarity('super-ultra-mega', 200, 400, 1, "🔹")
+    new Rarity('super', 200, 400, 1, "🔹")
 ];
 
 module.exports.getRandomRarity = () => {
@@ -25,12 +25,12 @@ module.exports.getRandomRarity = () => {
     return this.Rarities[weighted[Math.floor(Math.random() * weighted.length)]]
 };
 
-/*module.exports.test = () => {
+module.exports.test = () => {
     let results = {};
     for (var i = 0; i < 100000; i++) {
-        let random = this.getRandom()
+        let random = this.getRandomRarity()
         if(!results[random.name]) results[random.name] = 0;
         results[random.name]++;
     }
     return results
-};*/
+};

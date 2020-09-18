@@ -2,19 +2,16 @@
 const { Client, Collection } = require('discord.js');
 const { log } = require('./util/log');
 const { readdir } = require('fs');
-const { getPrefix } = require('./util/guildConfigHelper');
 const { addRobucs } = require('./util/playerDataHelper');
-const { Token, DBLink } = require('./config.json');
+const { Token, DefaultPrefix } = require('./config.json');
 const { getRandomRarity } = require('./TypeDefs');
-const Keyv = require('keyv');
+const { UserData } = require('./types/UserData');
+const { GuildData } = require('./types/GuildData');
 
 //variables
 const client = new Client({
     disableMentions: "everyone"
 })
-client.keyv = new Keyv(DBLink)
-
-client.keyv.on('error', err => log(err));
 
 //code
 //init commands
@@ -54,11 +51,15 @@ client.on('message', async message => {
     }
     addRobucs(message.guild, message.author, pickedRarity.toGive);
 
-    if(!message.content.startsWith((await getPrefix(message.guild)))) return;
+    message.guildData = new GuildData(message.guild);
+    if(!(message.content.startsWith(await message.guildData.prefix) || message.content.startsWith(DefaultPrefix))) return;
+    message.authorData = new UserData(message.guild, message.author);
     
-    let args = message.content.split(" ").filter(obj => obj != " ");
-    let command = args.shift().toLowerCase().slice((await getPrefix(message.guild)).length);
-    let commandObject = client.Commands.get(command) || client.Aliases.get(command);
+    let args = message.content.split(" ").filter(obj => obj != "");
+    let command = args.shift().toLowerCase();
+    let minusServerPrefix = await message.guildData.prefix ? command.slice((await message.guildData.prefix).length) : "rb.";
+    let minusDefault = command.slice(DefaultPrefix.length);
+    let commandObject = client.Commands.get(minusServerPrefix) || client.Aliases.get(minusServerPrefix) || client.Commands.get(minusDefault) || client.Aliases.get(minusDefault);
     if(!commandObject) return;
     commandObject.run(client, message, args);
 });

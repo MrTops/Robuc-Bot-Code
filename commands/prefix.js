@@ -1,7 +1,6 @@
 const { MessageEmbed } = require("discord.js");
 const { log } = require("../util/log");
-const { randomColor, color } = require("../util/color");
-const { getPrefix } = require("../util/guildConfigHelper");
+const { color } = require("../util/color");
 const { DefaultPrefix } = require("../config.json")
 const { sendError } = require("../util/genericError");
 
@@ -10,9 +9,10 @@ module.exports.run = async (client, message, args) => {
         sendError(message.channel, "You lack permission", "You need \`\`MANAGE_GUILD\`\` permission");
         return;
     }
-    let oldPrefix = await getPrefix(message.guild);
-    let success = await client.keyv.set(message.guild.id, args[0]).catch(err=>log(err));
-    let newPrefix = await getPrefix(message.guild);
+    let oldPrefix = await message.guildData.prefix;
+    message.guildData.prefixValue = args[0] || DefaultPrefix;
+    let newPrefix = await message.guildData.prefix;
+    let success = newPrefix !== oldPrefix;
     message.channel.send(new MessageEmbed()
         .setTitle(success ? "Prefix changed!" : "Something happened!")
         .setColor(success ? color.success : color.error)
