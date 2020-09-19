@@ -2,7 +2,7 @@ const Keyv = require("keyv");
 const { DBLink, DefaultPrefix } = require("../config.json");
 const { log } = require("../util/log");
 
-const keyv = new Keyv(DBLink);
+const keyv = new Keyv(DBLink, { namespace: "GUILDDATA" });
 
 class GuildData{
     constructor(guild){

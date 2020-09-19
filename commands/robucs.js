@@ -8,7 +8,7 @@ module.exports.run = async (client, message, args) => {
         .setColor(randomColor())
         .setTimestamp()
         .setTitle(`${message.author.username}'s Robucs`)
-        .setDescription(await getRobucs(message.guild, message.author))
+        .setDescription(`${await message.authorData.robucAmount}`)
     ).catch(err=>log(err));
 };
 

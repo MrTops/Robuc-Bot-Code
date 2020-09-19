@@ -41,6 +41,8 @@ client.on('message', async message => {
     if(message.author.bot) return;
     if(message.channel.type != "text") return;
 
+    message.authorData = new UserData(message.guild, message.author);
+
     let pickedRarity = getRandomRarity()
     if(pickedRarity.emoji){
         await message.react(pickedRarity.emoji).catch(err=>log(err));
@@ -49,11 +51,11 @@ client.on('message', async message => {
         collector.on('collect', r => {message.reactions.removeAll().catch(err=>log(err)); collector.stop();});
         collector.on('end', r => {message.reactions.removeAll().catch(err=>log(err))});
     }
-    addRobucs(message.guild, message.author, pickedRarity.toGive);
+    
+    message.authorData.robucAmount = (await message.authorData.robucAmount) + pickedRarity.toGive;
 
     message.guildData = new GuildData(message.guild);
     if(!(message.content.startsWith(await message.guildData.prefix) || message.content.startsWith(DefaultPrefix))) return;
-    message.authorData = new UserData(message.guild, message.author);
     
     let args = message.content.split(" ").filter(obj => obj != "");
     let command = args.shift().toLowerCase();

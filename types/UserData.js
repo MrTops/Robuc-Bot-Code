@@ -2,7 +2,7 @@ const Keyv = require("keyv");
 const { DBLink } = require("../config.json");
 const { log } = require("../util/log");
 
-const keyv = new Keyv(DBLink);
+const keyv = new Keyv(DBLink, { namespace: "USERDATA" });
 
 class UserData{
     constructor(guild, user){
@@ -12,9 +12,7 @@ class UserData{
     };
 
     save(){
-        keyv.set(this.userId, {
-            robucs: this.robucs
-        }).catch(err=>log(err))
+        keyv.set(this.dataKey + "/robucs", this.robucs).catch(err=>log(err));
     };
 
     get guildId(){
@@ -31,12 +29,13 @@ class UserData{
 
     get robucAmount(){
         return new Promise(async (resolution, rejection) => {
-            resolution((await keyv.get(this.dataKey).catch(err=>log(err))).robucs || 0);
+            resolution(
+                (await keyv.get(this.dataKey + "/robucs").catch(err=>log(err))) || 0
+            );
         });
     };
 
     set robucAmount(amount){
-        if(isNaN(amount)) return;
         this.robucs = amount;
         this.save();
     }; 
