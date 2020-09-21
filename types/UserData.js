@@ -1,6 +1,8 @@
 const Keyv = require("keyv");
 const { DBLink } = require("../config.json");
+const { alert } = require("../util/alertManager");
 const { log } = require("../util/log");
+const { GuildData } = require("./GuildData");
 
 const keyv = new Keyv(DBLink, { namespace: "USERDATA" });
 

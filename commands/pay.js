@@ -1,10 +1,12 @@
 const { MessageEmbed } = require("discord.js");
+const { UserData } = require("../types/UserData");
+const { alert } = require("../util/alertManager");
 const { color } = require("../util/color");
-const { sendError } = require("../util/genericError");
+const { sendError, sendInfo } = require("../util/genericError");
 const { log } = require("../util/log");
-const { getRobucs, addRobucs } = require("../util/playerDataHelper");
 
 module.exports.run = async (client, message, args) => {
+    message.delete().catch(err=>log(err));
     let target = message.mentions.users.first() || message.guild.member(args[0]);
     if(!target) {
         sendError(message.channel, `Could not locate user`, ``, 15000);
@@ -19,15 +21,12 @@ module.exports.run = async (client, message, args) => {
         return;
     }
     amount = Math.abs(amount);
-    if((await getRobucs(message.guild, message.author)) >= amount){
-        addRobucs(message.guild, message.author, -amount);
-        addRobucs(message.guild, target, amount);
-        message.channel.send(new MessageEmbed()
-            .setColor(color.success)
-            .setTimestamp()
-            .setTitle(`${amount} successfully sent!`)
-            .setDescription(`Sent ${amount} from <@!${message.author.id}>'s account to <@!${target.id}>'s account`)
-        ).catch(err=>log(err));
+    if(message.authorData.robucs >= amount){
+        message.authorData.robucAmount = (await message.authorData.robucAmount) - amount;
+        let otherData = new UserData(message.guild, target);
+        otherData.robucAmount = (await otherData.robucAmount) + amount;
+        alert(message.guildData, )
+        sendInfo(message.channel, `${amount} successfully sent!`, `Sent ${amount} from <@!${message.author.id}>'s account to <@!${target.id}>'s account`, 15000, color.success)
     }else {
         sendError(message.channel, `Too poor`, `you don't have \`\`${amount}\`\` to pay <@!${target.id}>`, 15000);
         return;

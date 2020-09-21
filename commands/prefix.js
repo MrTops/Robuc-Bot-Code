@@ -5,6 +5,7 @@ const { DefaultPrefix } = require("../config.json")
 const { sendError } = require("../util/genericError");
 
 module.exports.run = async (client, message, args) => {
+    message.delete().catch(err=>log(err));
     if(!message.guild.member(message).hasPermission("MANAGE_GUILD")) {
         sendError(message.channel, "You lack permission", "You need \`\`MANAGE_GUILD\`\` permission");
         return;

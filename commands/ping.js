@@ -3,6 +3,7 @@ const { log } = require("../util/log");
 const { randomColor } = require("../util/color")
 
 module.exports.run = async (client, message, args) => {
+    message.delete().catch(err=>log(err));
     let response = await message.channel.send(new MessageEmbed()
         .setColor(randomColor())
         .setTimestamp()

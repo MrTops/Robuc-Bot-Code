@@ -13,7 +13,7 @@ module.exports.sendError = async (channel, title, description="", timeout=15000)
     if(error) error.delete({ timeout: timeout }).catch(err=>log(err));
 };
 
-module.exports.sendInfo = async (channel, title, description="", timeout=1500, colorOverride=false) => {
+module.exports.sendInfo = async (channel, title, description="", timeout=15000, colorOverride=false) => {
     let info = await channel.send(new MessageEmbed()
         .setTitle(title)
         .setDescription(description)
